@@ -5,7 +5,7 @@ Here Event and Place
 
 
 
-Use Mongoose as dependencie
+Use Mongoose for the schema and update to Mongo
 
  
 - Pre Requisites 
