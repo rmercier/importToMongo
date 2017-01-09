@@ -6,7 +6,7 @@ var placeSchema = new mongoose.Schema({
   phone: {type: String},
   description: {type: String},
   website: { type: String, lowercase: true, trim: true },
-  type: {type: String, enum: ["restaurant","bar","museum","nightclub", "others", "theatre"], required: true},
+  type: {type: String, enum: ["restaurant","bar","museum","nightclub", "concert", "others", "theatre"], required: true},
   budget: {type: Number},
   position: {
     address:{

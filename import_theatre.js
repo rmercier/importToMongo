@@ -1,4 +1,8 @@
+const root = 'https://s3-eu-west-1.amazonaws.com/img-sail/images';
+const defaultImageUrl = '';
+
 var fs = require('fs');
+var moment = require('moment');
 
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
@@ -8,7 +12,8 @@ mongoose.Promise = global.Promise;
 var options = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } },
                 replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } };
 
-var mongodbUri = 'mongodb://sailadmin:Sail2017@ds023448.mlab.com:23448/saildb';
+//var mongodbUri = 'mongodb://sailadmin:Sail2017@ds023448.mlab.com:23448/saildb';
+var mongodbUri = 'mongodb://sailroot:Sail2017@198.211.118.218:30001/admin';
 mongoose.connect(mongodbUri, options);
 
 
@@ -55,15 +60,25 @@ console.log('bdd open');
   });
 });
 
+function stringToDate(str) {
+
+}
+
 function insertPlaceAndEvent(data) {
   console.log('insert');
 
   delete data['image_urls'];
 
-  var image = data['images'][0]['path'];
+  var image;
+  if (typeof data['images'] !== "undefined") {
+    image = data['images'][0]['path'];
+  }
+  else {
+    image = defaultImageUrl;
+  }
 
   delete data['images'];
-  data['images'] = image;
+  data['images'] = root + image;
 
   data['type'] = data['mtype']
   delete data['mtype']
@@ -82,24 +97,28 @@ function insertPlaceAndEvent(data) {
     if(events != null) {
       events.forEach(function(obj) {
         delete obj['image_urls'];
-        var image = obj['images']['path'];
+        var image;
+
+        if (typeof obj['images'] !== 'undefined') {
+          var image = typeof obj['images'][0] !== 'undefined' ? (root + obj['images'][0]['path']) : defaultImageUrl;
+        }
+        else image = defaultImageUrl;
+
         delete obj['images'];
         obj['images'] = image;
 
         obj['place'] = place._id;
+
         var data_event = new Event(obj);
         data_event.save(function (err) {
-          if (err) return console.log(err);
+          if (err) {
+            concsole.log(obj['name']);
+            return console.log(err);}
         });
       });
-
     }
-
   });
-
 }
-
-
 
 /* Functions
 */
